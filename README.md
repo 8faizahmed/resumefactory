@@ -1,36 +1,118 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+🚀 Resume Factory - AI-Powered Resume Builder
 
-## Getting Started
+A modern, local-first web application that helps you build, tailor, and export professional resumes. Built with Next.js 14, standardizing the gap between "editing" and "PDF output" by using the same React components for both.
 
-First, run the development server:
+✨ Features
 
-```bash
+🧠 AI Intelligence (Powered by Gemini)
+
+Auto-Tailoring: Paste a Job Description, and the AI rewrites your bullet points to match the role keywords and requirements.
+
+Smart Import: Paste your existing resume text, and the AI parses it into a structured JSON schema automatically.
+
+🎨 Visual Workspace
+
+Real-Time Preview: See changes instantly on an 8.5" x 11" canvas that mirrors the final PDF exactly.
+
+Visual Editor: Drag-and-drop experience for rearranging jobs, education, and skills.
+
+Themes: Switch between distinct templates:
+
+Modern: Clean, sans-serif layout for tech/startup roles.
+
+Classic: Serif-based, Ivy League style for traditional industries.
+
+Creative: Two-column layout with a persistent sidebar for design/creative roles.
+
+📂 File Management (Local First)
+
+Auto-Save: Changes are saved to your browser's Local Storage.
+
+Versioning: Create duplicates to maintain different versions (e.g., "Software Engineer Resume" vs "Product Manager Resume").
+
+Privacy Focused: No database required. Your data lives in your browser.
+
+🖨️ Pixel-Perfect PDF Export
+
+Uses Puppeteer to generate PDFs that look exactly like the React preview.
+
+Solves common HTML-to-PDF issues (page breaks, margins, background colors) using advanced CSS print directives.
+
+🛠️ Tech Stack
+
+Framework: Next.js 14 (App Router)
+
+Styling: Tailwind CSS
+
+AI: Google Gemini API (@google/generative-ai)
+
+PDF Engine: Puppeteer
+
+Language: TypeScript
+
+🚀 Getting Started
+
+Prerequisites
+
+Node.js 18+
+
+A Google Gemini API Key (Get it here)
+
+Installation
+
+Clone the repo
+
+git clone [https://github.com/yourusername/resume-factory.git](https://github.com/yourusername/resume-factory.git)
+cd resume-factory
+
+
+
+Install dependencies
+
+npm install
+
+
+
+Set up Environment Variables
+Create a .env.local file in the root directory:
+
+GEMINI_API_KEY=your_api_key_here
+
+
+
+Run the development server
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Open your browser
+Navigate to http://localhost:3000.
 
-## Learn More
+📖 Usage Guide
 
-To learn more about Next.js, take a look at the following resources:
+Import or Start Fresh: Click "Import Text" to paste your old resume, or start typing in the editor.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Select a Theme: Use the toggle in the header to choose a style (Modern/Classic/Creative).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Tailor: Paste a Job Description in the left panel and click "Auto-Tailor" to optimize your experience section.
 
-## Deploy on Vercel
+Export: Click "Download PDF" to get a ATS-friendly, printable file.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+🤝 Contributing
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+Fork the Project
+
+Create your Feature Branch (git checkout -b feature/AmazingFeature)
+
+Commit your Changes (git commit -m 'Add some AmazingFeature')
+
+Push to the Branch (git push origin feature/AmazingFeature)
+
+Open a Pull Request
+
+📄 License
+
+Proprietary. All rights reserved.

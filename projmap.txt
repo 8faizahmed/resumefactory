@@ -1,0 +1,22 @@
+## PROJECT MAP: ResumeBuilder v1 (Next.js 14 + Tailwind + Puppeteer)
+
+### FILE STRUCTURE
+/app
+  /api
+    /generate-pdf/route.ts  # Puppeteer PDF generation
+    /tailor-resume/route.ts # Gemini API integration
+  /components
+    /editor                 # Modular editor forms
+      Accordion.tsx
+      ExperienceForm.tsx    # Handles Job list (Add/Move/Delete)
+      EducationForm.tsx     # Handles Education list
+    ResumePreview.tsx       # Live visual preview (US Letter Aspect Ratio)
+  page.tsx                  # Main Controller (State Holder)
+/types
+  resume.ts                 # TS Interfaces (ResumeData)
+/public                     # Static assets
+
+### CHANGE LOG
+[2025-12-28] Refactor: Extracted editor forms from page.tsx to /components/editor/.
+[2025-12-28] UI Fix: Moved "Move/Delete" buttons in ExperienceForm to header row.
+[2025-12-28] UI Fix: Locked ResumePreview width to 8.5in to fix aspect ratio distortion.
