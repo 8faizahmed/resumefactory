@@ -1,118 +1,124 @@
-🚀 Resume Factory - AI-Powered Resume Builder
+# 🚀 Resume Factory
 
-A modern, local-first web application that helps you build, tailor, and export professional resumes. Built with Next.js 14, standardizing the gap between "editing" and "PDF output" by using the same React components for both.
+> **A local-first, AI-powered resume workspace.**
+> Build, tailor, and export ATS-friendly resumes with pixel-perfect PDF parity.
 
-✨ Features
+## 📖 Table of Contents
 
-🧠 AI Intelligence (Powered by Gemini)
+- [✨ Key Features](#-key-features)
+- [🛠️ Tech Stack](#️-tech-stack)
+- [🚀 Getting Started](#-getting-started)
+- [📖 Usage Guide](#-usage-guide)
+- [📂 Project Structure](#-project-structure)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
 
-Auto-Tailoring: Paste a Job Description, and the AI rewrites your bullet points to match the role keywords and requirements.
+## ✨ Key Features
 
-Smart Import: Paste your existing resume text, and the AI parses it into a structured JSON schema automatically.
+### 🧠 AI Intelligence
+* **Auto-Tailoring**: Paste a Job Description, and the AI rewrites your experience bullet points to match role keywords.
+* **Smart Import**: Dump raw text from an old resume, and our parser reconstructs it into a structured JSON schema.
 
-🎨 Visual Workspace
+### 🎨 Visual Workspace
+* **Real-Time WYSIWYG**: 1:1 preview of your PDF on an 8.5" x 11" digital canvas.
+* **Theme Engine**: Switch instantly between styles:
+    * **Modern**: Clean, sans-serif layout for tech/startup roles.
+    * **Classic**: Serif-based, Ivy League style for traditional industries.
+    * **Creative**: Two-column layout with a persistent sidebar.
+* **Structure Control**: Toggle section ordering (e.g., *Education* above *Skills* or vice versa).
 
-Real-Time Preview: See changes instantly on an 8.5" x 11" canvas that mirrors the final PDF exactly.
+### 📂 Local File Management
+* **Browser-Based Storage**: All data is saved to LocalStorage. No database required.
+* **Versioning system**: Create "Master" resumes and duplicate them for specific job applications.
+* **Auto-Save**: Never lose your edits.
 
-Visual Editor: Drag-and-drop experience for rearranging jobs, education, and skills.
+### 🖨️ Pixel-Perfect Export
+* **Puppeteer Engine**: We use a headless Chrome instance to "print" the exact React components you see on screen.
+* **Advanced CSS**: Handles complex print logic like page breaks, orphans, widows, and background graphics.
 
-Themes: Switch between distinct templates:
+## 🛠️ Tech Stack
 
-Modern: Clean, sans-serif layout for tech/startup roles.
+| Component | Technology | Description |
+| :--- | :--- | :--- |
+| **Framework** | Next.js 14 (App Router) | Server-side rendering & API Routes |
+| **Language** | TypeScript | Type-safe data models for Resumes |
+| **Styling** | Tailwind CSS | Utility-first styling for print & screen |
+| **AI Model** | Google Gemini 1.5 Flash | Fast text processing & reasoning |
+| **PDF Engine** | Puppeteer | High-fidelity HTML-to-PDF conversion |
 
-Classic: Serif-based, Ivy League style for traditional industries.
+## 🚀 Getting Started
 
-Creative: Two-column layout with a persistent sidebar for design/creative roles.
+### Prerequisites
+* Node.js 18+
+* A Google Gemini API Key ([Get it here](https://aistudio.google.com/app/apikey))
 
-📂 File Management (Local First)
+### Installation
 
-Auto-Save: Changes are saved to your browser's Local Storage.
+1.  **Clone the repository**
+    ```bash
+    git clone [https://github.com/yourusername/resume-factory.git](https://github.com/yourusername/resume-factory.git)
+    cd resume-factory
+    ```
 
-Versioning: Create duplicates to maintain different versions (e.g., "Software Engineer Resume" vs "Product Manager Resume").
+2.  **Install dependencies**
+    ```bash
+    npm install
+    ```
 
-Privacy Focused: No database required. Your data lives in your browser.
+3.  **Configure Environment**
+    Create a `.env.local` file in the root directory:
+    ```bash
+    GEMINI_API_KEY=your_api_key_here
+    ```
 
-🖨️ Pixel-Perfect PDF Export
+4.  **Run the application**
+    ```bash
+    npm run dev
+    ```
 
-Uses Puppeteer to generate PDFs that look exactly like the React preview.
+5.  **Launch**
+    Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-Solves common HTML-to-PDF issues (page breaks, margins, background colors) using advanced CSS print directives.
+## 📖 Usage Guide
 
-🛠️ Tech Stack
+### 1. The Workflow
+* **Import**: Click `Import Text` to paste your existing resume. The AI will structure it.
+* **Edit**: Use the visual form editor to refine bullet points.
+* **Tailor**: Paste a JD into the "AI Toolbox" on the left. Click `Auto-Tailor` to generate a targeted version.
 
-Framework: Next.js 14 (App Router)
+### 2. Managing Files
+* **Sidebar**: Access your history of saved resumes.
+* **Duplicate**: Hover over a file and click the generic "Copy" icon to fork a version (useful for A/B testing resumes).
 
-Styling: Tailwind CSS
+### 3. Exporting
+* **Theme Selection**: Choose between *Modern*, *Classic*, or *Creative*.
+* **Download**: Click the floating `Download PDF` button. The file is generated server-side for maximum quality.
 
-AI: Google Gemini API (@google/generative-ai)
+## 📂 Project Structure
 
-PDF Engine: Puppeteer
+```text
+/resume-builder
+├── app/
+│   ├── api/             # Next.js API Routes (PDF Gen, AI Ops)
+│   ├── components/
+│   │   ├── editor/      # Form logic (Experience, Skills, etc.)
+│   │   └── templates/   # Resume Designs (Modern, Classic...)
+│   └── services/        # LocalStorage persistence logic
+├── types/               # TypeScript Interfaces
+└── public/              # Static Assets
+```
 
-Language: TypeScript
+## 🤝 Contributing
 
-🚀 Getting Started
+Contributions are welcome! Please follow these steps:
 
-Prerequisites
+1.  Fork the Project
+2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4.  Push to the Branch (`git push origin feature/AmazingFeature`)
+5.  Open a Pull Request
 
-Node.js 18+
+## 📄 License
 
-A Google Gemini API Key (Get it here)
-
-Installation
-
-Clone the repo
-
-git clone [https://github.com/yourusername/resume-factory.git](https://github.com/yourusername/resume-factory.git)
-cd resume-factory
-
-
-
-Install dependencies
-
-npm install
-
-
-
-Set up Environment Variables
-Create a .env.local file in the root directory:
-
-GEMINI_API_KEY=your_api_key_here
-
-
-
-Run the development server
-
-npm run dev
-
-
-
-Open your browser
-Navigate to http://localhost:3000.
-
-📖 Usage Guide
-
-Import or Start Fresh: Click "Import Text" to paste your old resume, or start typing in the editor.
-
-Select a Theme: Use the toggle in the header to choose a style (Modern/Classic/Creative).
-
-Tailor: Paste a Job Description in the left panel and click "Auto-Tailor" to optimize your experience section.
-
-Export: Click "Download PDF" to get a ATS-friendly, printable file.
-
-🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-Fork the Project
-
-Create your Feature Branch (git checkout -b feature/AmazingFeature)
-
-Commit your Changes (git commit -m 'Add some AmazingFeature')
-
-Push to the Branch (git push origin feature/AmazingFeature)
-
-Open a Pull Request
-
-📄 License
-
-Proprietary. All rights reserved.
+**Proprietary Software.**
+All rights reserved. Unauthorized copying, modification, distribution, or use of this software is strictly prohibited.
