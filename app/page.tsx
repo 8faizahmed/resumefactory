@@ -9,6 +9,7 @@ import { ExperienceForm } from './components/editor/ExperienceForm';
 import { EducationForm } from './components/editor/EducationForm';
 import { SkillsForm } from './components/editor/SkillsForm';
 import { ImportModal } from './components/ImportModal';
+import { CoverLetterModal } from './components/CoverLetterModal'; // NEW
 import { Sidebar } from './components/Sidebar';
 import { Toast, ToastMessage } from './components/Toast';
 
@@ -46,7 +47,12 @@ export default function Home() {
   
   // VIEW SETTINGS
   const [theme, setTheme] = useState<'modern' | 'classic' | 'creative'>('modern');
-  const [educationFirst, setEducationFirst] = useState(true); // Default to Education ABOVE Skills
+  const [educationFirst, setEducationFirst] = useState(true); 
+
+  // COVER LETTER STATE (NEW)
+  const [isCoverLetterOpen, setIsCoverLetterOpen] = useState(false);
+  const [coverLetterContent, setCoverLetterContent] = useState('');
+  const [isWritingLetter, setIsWritingLetter] = useState(false);
 
   // TOAST STATE
   const [toast, setToast] = useState<ToastMessage | null>(null);
@@ -64,8 +70,10 @@ export default function Home() {
   };
 
   useEffect(() => {
-    // Auto-save logic could go here
-  }, [resumeData]);
+    if (resumeData !== defaultResumeData && currentFileId) {
+       // Optional: Auto-save logic could go here
+    }
+  }, [resumeData, currentFileId]);
 
   // --- GENERIC FIELD HANDLERS ---
   const handlePersonalChange = (field: string, value: string) => {
@@ -180,13 +188,40 @@ export default function Home() {
     }
   };
 
+  // NEW: Handle Cover Letter Generation
+  const handleGenerateCoverLetter = async () => {
+    if (!jobDescription.trim()) {
+      showToast("Paste a Job Description to generate a letter.", "error");
+      return;
+    }
+    setIsWritingLetter(true);
+    try {
+      const res = await fetch('/api/generate-cover-letter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ resumeJson: resumeData, jobDescription }),
+      });
+      
+      if (!res.ok) throw new Error('Failed');
+      
+      const data = await res.json();
+      setCoverLetterContent(data.coverLetter);
+      setIsCoverLetterOpen(true);
+      showToast("Cover Letter Generated!", "success");
+    } catch (e) {
+      showToast("Could not generate cover letter.", "error");
+    } finally {
+      setIsWritingLetter(false);
+    }
+  };
+
   const handleDownload = async () => {
     setIsDownloading(true);
     try {
       const res = await fetch('/api/generate-pdf', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ data: resumeData, theme, settings: { educationFirst } }), // Pass settings
+        body: JSON.stringify({ data: resumeData, theme, settings: { educationFirst } }), 
       });
       const blob = await res.blob();
       const url = window.URL.createObjectURL(blob);
@@ -221,11 +256,16 @@ export default function Home() {
       {/* 2. MAIN CONTENT AREA */}
       <div className="flex-grow flex flex-col h-screen overflow-hidden">
         
-        {/* IMPORT MODAL */}
+        {/* MODALS */}
         <ImportModal 
           isOpen={isImportOpen} 
           onClose={() => setIsImportOpen(false)} 
           onImport={handleImportSuccess}
+        />
+        <CoverLetterModal 
+          isOpen={isCoverLetterOpen}
+          onClose={() => setIsCoverLetterOpen(false)}
+          initialContent={coverLetterContent}
         />
 
         {/* TOP BAR (Header) */}
@@ -257,7 +297,7 @@ export default function Home() {
               ))}
             </div>
 
-            {/* STRUCTURE TOGGLE (NEW) */}
+            {/* STRUCTURE TOGGLE */}
             <button 
               onClick={() => setEducationFirst(!educationFirst)}
               className="text-xs font-bold bg-gray-100 text-gray-600 px-3 py-1 rounded hover:bg-gray-200 border border-gray-200"
@@ -292,14 +332,24 @@ export default function Home() {
                 value={jobDescription}
                 onChange={(e) => setJobDescription(e.target.value)}
               />
-              <button
-                onClick={handleTailor}
-                disabled={isGenerating}
-                className={`w-full mt-2 py-2 rounded text-sm font-bold text-white shadow transition-all
-                  ${isGenerating ? 'bg-purple-400' : 'bg-purple-600 hover:bg-purple-700'}`}
-              >
-                {isGenerating ? "Optimizing..." : "✨ Auto-Tailor to JD"}
-              </button>
+              
+              <div className="flex gap-2 mt-2">
+                <button
+                  onClick={handleTailor}
+                  disabled={isGenerating || isWritingLetter}
+                  className={`flex-1 py-2 rounded text-sm font-bold text-white shadow transition-all
+                    ${isGenerating ? 'bg-purple-400' : 'bg-purple-600 hover:bg-purple-700'}`}
+                >
+                  {isGenerating ? "Optimizing..." : "✨ Auto-Tailor"}
+                </button>
+                <button
+                  onClick={handleGenerateCoverLetter}
+                  disabled={isGenerating || isWritingLetter}
+                  className={`flex-1 py-2 rounded text-sm font-bold text-purple-700 bg-purple-100 hover:bg-purple-200 shadow-sm transition-all border border-purple-200`}
+                >
+                  {isWritingLetter ? "Writing..." : "📝 Write Letter"}
+                </button>
+              </div>
             </div>
 
             {/* EDITOR TABS */}
@@ -336,7 +386,6 @@ export default function Home() {
                   />
                 </Accordion>
 
-                {/* NOTE: We keep editor order static, only Preview changes */}
                 <Accordion title="Education" isOpen={openSections.education} onToggle={() => toggleSection('education')}>
                   <EducationForm
                      data={resumeData.education}
@@ -393,6 +442,7 @@ export default function Home() {
         </div>
       </div>
       
+      {/* GLOBAL STYLES */}
       <style jsx global>{`
         .input-field { 
           width: 100%; 
