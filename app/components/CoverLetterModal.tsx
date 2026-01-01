@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { ResumeData } from '@/types/resume';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   initialContent: string;
+  personalInfo?: ResumeData['personalInfo']; // Needed for PDF Header
 }
 
-export const CoverLetterModal = ({ isOpen, onClose, initialContent }: Props) => {
+export const CoverLetterModal = ({ isOpen, onClose, initialContent, personalInfo }: Props) => {
   const [content, setContent] = useState(initialContent);
   const [isCopied, setIsCopied] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
-  // Reset content when modal opens with new data
   useEffect(() => {
     setContent(initialContent);
   }, [initialContent]);
@@ -19,6 +21,33 @@ export const CoverLetterModal = ({ isOpen, onClose, initialContent }: Props) => 
     navigator.clipboard.writeText(content);
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
+  };
+
+  const handleDownloadPdf = async () => {
+    if (!personalInfo) return alert("Missing personal info for PDF header");
+    setIsDownloading(true);
+    try {
+      const res = await fetch('/api/generate-cover-letter-pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ personalInfo, content }),
+      });
+      
+      if (!res.ok) throw new Error("Failed");
+      
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Cover_Letter.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } catch (e) {
+      alert("Failed to generate PDF");
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -30,49 +59,41 @@ export const CoverLetterModal = ({ isOpen, onClose, initialContent }: Props) => 
         {/* Header */}
         <div className="flex justify-between items-center p-6 border-b border-gray-100">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Generated Cover Letter</h2>
-            <p className="text-sm text-gray-500">Review and edit before sending.</p>
+            <h2 className="text-xl font-bold text-gray-900">Cover Letter Assistant</h2>
+            <p className="text-sm text-gray-500">Edit content before exporting.</p>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
-          </button>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">✕</button>
         </div>
         
         {/* Editor */}
         <div className="flex-grow p-6 bg-gray-50">
           <textarea
-            className="w-full h-full min-h-[400px] p-6 text-sm text-gray-800 leading-relaxed bg-white border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 resize-none font-serif"
+            className="w-full h-full min-h-[400px] p-8 text-sm text-gray-800 leading-relaxed bg-white border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 resize-none font-serif whitespace-pre-wrap"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            spellCheck={true}
+            placeholder="Your cover letter will appear here..."
           />
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-gray-100 flex justify-end gap-3 bg-white rounded-b-xl">
-          <button 
-            onClick={onClose} 
-            className="px-5 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            Close
-          </button>
-          <button 
-            onClick={handleCopy} 
-            className={`px-6 py-2.5 text-sm font-bold text-white rounded-lg shadow transition-all flex items-center gap-2
-              ${isCopied ? 'bg-green-600' : 'bg-blue-600 hover:bg-blue-700 hover:shadow-md'}`}
-          >
-            {isCopied ? (
-              <>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
-                Copied to Clipboard
-              </>
-            ) : (
-              <>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>
-                Copy Text
-              </>
-            )}
-          </button>
+        <div className="p-4 border-t border-gray-100 flex justify-between items-center bg-white rounded-b-xl">
+          <button onClick={onClose} className="text-sm font-bold text-gray-500 hover:text-gray-700 px-4">Cancel</button>
+          
+          <div className="flex gap-3">
+            <button 
+              onClick={handleCopy} 
+              className="px-4 py-2 text-sm font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+            >
+              {isCopied ? "Copied!" : "Copy Text"}
+            </button>
+            <button 
+              onClick={handleDownloadPdf} 
+              disabled={isDownloading}
+              className="px-5 py-2 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-2"
+            >
+              {isDownloading ? "Generating..." : "Download PDF"}
+            </button>
+          </div>
         </div>
       </div>
     </div>

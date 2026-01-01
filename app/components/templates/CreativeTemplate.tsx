@@ -1,10 +1,22 @@
 import React from 'react';
 import { ResumeData } from '@/types/resume';
 
-export const CreativeTemplate = ({ data, educationFirst }: { data: ResumeData, educationFirst?: boolean }) => {
-  
+interface Props {
+  data: ResumeData;
+  educationFirst?: boolean;
+  highlightedSection?: string | null;
+}
+
+export const CreativeTemplate = ({ data, educationFirst, highlightedSection }: Props) => {
+  const isHighlighted = highlightedSection === 'tailored';
+  // Use a text-color change or different highlight for dark backgrounds if needed, 
+  // but yellow highlight works well enough over dark too if semi-transparent.
+  // For the dark sidebar, we'll use a border/ring instead of background to keep text legible.
+  const darkHighlightClass = isHighlighted ? "ring-2 ring-yellow-400 rounded p-1 transition-all duration-500" : "";
+  const lightHighlightClass = isHighlighted ? "bg-yellow-50 ring-2 ring-yellow-300 rounded p-1 transition-all duration-500" : "";
+
   const Skills = () => (
-    <div className="mb-8">
+    <div className={`mb-8 ${darkHighlightClass}`}>
       <h3 className="uppercase tracking-widest text-xs font-bold border-b border-gray-700 pb-2 mb-4 text-blue-400">Skills</h3>
       <div className="space-y-4">
         {data.skills.map((skill, idx) => (
@@ -61,12 +73,12 @@ export const CreativeTemplate = ({ data, educationFirst }: { data: ResumeData, e
 
       {/* RIGHT COLUMN */}
       <div className="w-[68%] p-8 pt-12 pb-12 bg-white text-gray-800">
-        <div className="mb-8">
+        <div className={`mb-8 ${lightHighlightClass}`}>
           <h2 className="uppercase tracking-widest text-sm font-bold border-b-2 border-slate-900 pb-2 mb-4">Profile</h2>
           <p className="text-sm leading-relaxed text-gray-600 text-justify">{data.summary}</p>
         </div>
 
-        <div>
+        <div className={lightHighlightClass}>
           <h2 className="uppercase tracking-widest text-sm font-bold border-b-2 border-slate-900 pb-2 mb-6">Experience</h2>
           {data.experience.map((job, idx) => (
             <div key={idx} className="pt-6 pb-2">

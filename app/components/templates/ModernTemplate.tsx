@@ -1,10 +1,18 @@
 import React from 'react';
 import { ResumeData } from '@/types/resume';
 
-export const ModernTemplate = ({ data, educationFirst }: { data: ResumeData, educationFirst?: boolean }) => {
-  
+interface Props {
+  data: ResumeData;
+  educationFirst?: boolean;
+  highlightedSection?: string | null;
+}
+
+export const ModernTemplate = ({ data, educationFirst, highlightedSection }: Props) => {
+  const isHighlighted = highlightedSection === 'tailored';
+  const highlightClass = isHighlighted ? "bg-yellow-50 ring-2 ring-yellow-300 rounded p-1 transition-all duration-500" : "";
+
   const Skills = () => (
-    <div className="mb-6">
+    <div className={`mb-6 ${isHighlighted ? highlightClass : ''}`}>
        <h2 className="text-xs font-bold uppercase text-blue-800 tracking-wider mb-3">Skills & Expertise</h2>
        <div className="text-[13px] grid grid-cols-1 gap-1">
          {data.skills.map((skill, idx) => (
@@ -50,13 +58,13 @@ export const ModernTemplate = ({ data, educationFirst }: { data: ResumeData, edu
       </div>
 
       {/* SUMMARY */}
-      <div className="mb-6">
+      <div className={`mb-6 ${isHighlighted ? highlightClass : ''}`}>
         <h2 className="text-xs font-bold uppercase text-blue-800 tracking-wider mb-2">Professional Summary</h2>
         <p className="text-justify text-sm leading-relaxed text-gray-800">{data.summary}</p>
       </div>
 
       {/* EXPERIENCE */}
-      <div className="mb-6">
+      <div className={`mb-6 ${isHighlighted ? highlightClass : ''}`}>
         <h2 className="text-xs font-bold uppercase text-blue-800 tracking-wider mb-4">Work Experience</h2>
         {data.experience.map((job, idx) => (
           <div key={idx} className="mb-5">

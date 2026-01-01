@@ -8,17 +8,17 @@ interface Props {
   data: ResumeData;
   theme: 'modern' | 'classic' | 'creative';
   highlightedSection?: string | null;
-  educationFirst?: boolean; // NEW PROP
+  educationFirst?: boolean;
 }
 
-export const ResumePreview: React.FC<Props> = ({ data, theme, educationFirst = true }) => {
+export const ResumePreview: React.FC<Props> = ({ data, theme, highlightedSection, educationFirst = true }) => {
   
   const getTemplate = () => {
     switch (theme) {
-      case 'classic': return <ClassicTemplate data={data} educationFirst={educationFirst} />;
-      case 'creative': return <CreativeTemplate data={data} educationFirst={educationFirst} />;
+      case 'classic': return <ClassicTemplate data={data} educationFirst={educationFirst} highlightedSection={highlightedSection} />;
+      case 'creative': return <CreativeTemplate data={data} educationFirst={educationFirst} highlightedSection={highlightedSection} />;
       case 'modern':
-      default: return <ModernTemplate data={data} educationFirst={educationFirst} />;
+      default: return <ModernTemplate data={data} educationFirst={educationFirst} highlightedSection={highlightedSection} />;
     }
   };
 

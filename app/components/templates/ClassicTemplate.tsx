@@ -1,10 +1,18 @@
 import React from 'react';
 import { ResumeData } from '@/types/resume';
 
-export const ClassicTemplate = ({ data, educationFirst }: { data: ResumeData, educationFirst?: boolean }) => {
-  
+interface Props {
+  data: ResumeData;
+  educationFirst?: boolean;
+  highlightedSection?: string | null;
+}
+
+export const ClassicTemplate = ({ data, educationFirst, highlightedSection }: Props) => {
+  const isHighlighted = highlightedSection === 'tailored';
+  const highlightClass = isHighlighted ? "bg-yellow-50 ring-2 ring-yellow-300 rounded p-1 transition-all duration-500" : "";
+
   const Skills = () => (
-    <div>
+    <div className={isHighlighted ? highlightClass : ''}>
        <h2 className="text-[12pt] font-bold uppercase border-b border-black mb-3">Skills</h2>
        <div className="space-y-1">
          {data.skills.map((skill, idx) => (
@@ -49,12 +57,12 @@ export const ClassicTemplate = ({ data, educationFirst }: { data: ResumeData, ed
         </div>
       </div>
 
-      <div className="mb-5">
+      <div className={`mb-5 ${isHighlighted ? highlightClass : ''}`}>
         <h2 className="text-[12pt] font-bold uppercase border-b border-black mb-2">Professional Summary</h2>
         <p className="text-justify">{data.summary}</p>
       </div>
 
-      <div className="mb-5">
+      <div className={`mb-5 ${isHighlighted ? highlightClass : ''}`}>
         <h2 className="text-[12pt] font-bold uppercase border-b border-black mb-4">Experience</h2>
         {data.experience.map((job, idx) => (
           <div key={idx} className="mb-4">

@@ -1,31 +1,49 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
+// FORCE NODE.JS RUNTIME
+export const runtime = 'nodejs';
+
 export async function POST(req: NextRequest) {
   try {
     const { resumeJson, jobDescription } = await req.json();
     
-    // 1. Initialize Gemini
+    // 1. Init Gemini
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
     const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
 
-    // 2. The Prompt
-    // We force Gemini to output ONLY valid JSON matching the exact structure we sent.
+    // 2. The Enhanced Prompt
     const prompt = `
-      You are an expert Resume Strategist. 
+      You are an expert Resume Strategist and ATS Specialist.
       
       TASK:
-      Tailor the "experience" section of the provided Resume JSON to match the Job Description.
-      1. Reorder bullet points to prioritize relevant skills.
-      2. Rewrite bullet points to use keywords from the JD, but keep them truthful.
-      3. Do NOT invent new jobs or dates. Only modify the "bullets" array for each job.
-      4. Return ONLY the full valid JSON object. No markdown formatting, no comments.
+      Tailor the provided CANDIDATE RESUME to match the TARGET JOB DESCRIPTION.
+      
+      REQUIREMENTS:
+      
+      1. **Professional Summary**:
+         - Rewrite the summary to be punchy, compelling, and directly relevant to the role.
+         - Incorporate key job titles and "power keywords" from the JD.
+         - Keep it under 4 lines.
 
-      RESUME JSON:
-      ${JSON.stringify(resumeJson)}
+      2. **Skills & Expertise**:
+         - Reorder the skills so the most relevant categories and items appear first.
+         - If the candidate has a skill listed that is crucial for the JD, ensure it is prominent.
+         - Do NOT invent skills the candidate does not possess. Only rephrase or re-prioritize.
 
-      JOB DESCRIPTION:
-      ${jobDescription}
+      3. **Work Experience**:
+         - For each job, reorder bullet points to prioritize relevant achievements.
+         - Rewrite bullets to use the same terminology/keywords as the JD where truthful.
+         - Focus on impact (numbers, percentages) and problem-solving.
+
+      INPUT DATA:
+      - Resume JSON: ${JSON.stringify(resumeJson)}
+      - Job Description: ${jobDescription}
+
+      OUTPUT:
+      - Return ONLY the full, valid JSON object with the updated fields. 
+      - Do not include markdown formatting (like \`\`\`json).
+      - Ensure the structure matches the input JSON exactly.
     `;
 
     // 3. Generate
@@ -34,11 +52,16 @@ export async function POST(req: NextRequest) {
     const text = response.text();
 
     // 4. Clean and Parse
-    // Sometimes Gemini adds markdown code blocks (```json ... ```). We strip them.
+    // Strip markdown code blocks if present
     const cleanedText = text.replace(/```json/g, '').replace(/```/g, '').trim();
-    const tailoredJson = JSON.parse(cleanedText);
-
-    return NextResponse.json(tailoredJson);
+    
+    try {
+        const tailoredJson = JSON.parse(cleanedText);
+        return NextResponse.json(tailoredJson);
+    } catch (parseError) {
+        console.error("JSON Parse Error:", text);
+        return NextResponse.json({ error: 'AI returned invalid JSON' }, { status: 500 });
+    }
 
   } catch (error) {
     console.error(error);
