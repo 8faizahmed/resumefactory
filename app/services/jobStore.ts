@@ -4,7 +4,7 @@ import { ResumeData } from '@/types/resume';
 
 const STORAGE_KEY = 'resume_builder_jobs';
 
-// Default empty resume if none exists
+// Default empty resume if absolutely nothing exists
 const defaultResume: ResumeData = {
   personalInfo: { name: "Your Name", location: "", phone: "", email: "", linkedin: "", portfolio: "" },
   summary: "", experience: [], education: [], skills: []
@@ -21,31 +21,40 @@ export const JobStore = {
     return JobStore.getAll().find(j => j.id === id);
   },
 
-  // Create a new Job Application AND a Resume Snapshot
-  create: (company: string, role: string, description: string = ""): string => {
+  // Create a new Job Application with a specific Base Resume
+  create: (company: string, role: string, description: string = "", sourceResumeId?: string): string => {
     const jobs = JobStore.getAll();
     const id = crypto.randomUUID();
     
-    // 1. Create a Snapshot of the most recent resume (or default)
+    // 1. Resolve Source Data (The "Base")
     const allResumes = ResumeStore.getAll();
-    const masterResume = allResumes.length > 0 ? allResumes[0].data : defaultResume;
+    let sourceData: ResumeData = defaultResume;
+
+    if (sourceResumeId) {
+      const found = allResumes.find(r => r.id === sourceResumeId);
+      if (found) sourceData = found.data;
+    } else if (allResumes.length > 0) {
+      // Fallback to most recent if user didn't pick one
+      sourceData = allResumes[0].data;
+    }
     
-    // Save this new snapshot specifically for this job
+    // 2. Create a NEW Snapshot specifically for this job
+    // We clone the data so editing this job's resume doesn't touch the original.
     const snapshotId = ResumeStore.save(
-      masterResume, 
-      `For ${company} - ${role}` // Resume Name
+      sourceData, 
+      `For ${company} - ${role}` 
     );
 
-    // 2. Create the Job
+    // 3. Create the Job
     const newJob: JobApplication = {
       id,
       company,
       role,
       jobDescription: description,
-      status: 'saved', // Default status
+      status: 'saved',
       dateAdded: Date.now(),
       dateUpdated: Date.now(),
-      resumeId: snapshotId
+      resumeId: snapshotId // Link to the new snapshot
     };
 
     jobs.unshift(newJob);
@@ -66,8 +75,5 @@ export const JobStore = {
     const jobs = JobStore.getAll();
     const filtered = jobs.filter(j => j.id !== id);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
-    
-    // Ideally, we should also delete the linked resume snapshot here to clean up, 
-    // but we'll leave it for now in case of accidental deletion.
   }
 };

@@ -19,7 +19,8 @@ export async function POST(req: NextRequest) {
       RULES:
       1. Map fields as accurately as possible.
       2. If a field is missing (e.g., LinkedIn), leave it empty or null.
-      3. RETURN ONLY VALID JSON. No markdown formatting.
+      3. Summarize "bullets" into clean, impactful sentences if the input is messy.
+      4. RETURN ONLY VALID JSON. No markdown formatting.
 
       REQUIRED JSON STRUCTURE:
       {

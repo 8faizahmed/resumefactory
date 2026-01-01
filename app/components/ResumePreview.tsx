@@ -37,7 +37,8 @@ export const ResumePreview: React.FC<Props> = ({ data, theme, highlightedSection
       />
 
       {/* TEMPLATE CONTENT */}
-      <div className={theme === 'creative' ? 'h-full' : 'p-[0.5in] h-full'}>
+      {/* Further reduced padding to p-6 (approx 0.25in) to maximize content area */}
+      <div className={theme === 'creative' ? 'h-full' : 'p-6 h-full'}>
         {getTemplate()}
       </div>
     </div>
